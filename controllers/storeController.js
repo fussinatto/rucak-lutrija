@@ -5,6 +5,10 @@ const Store = mongoose.model('Store');
 exports.homePage = (req, res) =>  {
   res.render('index');
 };
+// nemam pojma
+function nemam (sss){
+
+}
 
 exports.addStore = (req, res) =>  {
   res.render('editStore',{
@@ -15,5 +19,10 @@ exports.addStore = (req, res) =>  {
 exports.createStore = async (req, res) =>  {
   let store = await (new Store(req.body)).save();
   req.flash('success', `Successfully created ${store.name}.`)
-  res.redirect('/');
+  res.redirect('/')
 };
+
+exports.getStores = async (req, res) => {
+  const stores = await Store.find()
+  res.render('stores', {title: 'Stores', stores})
+}

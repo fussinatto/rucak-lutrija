@@ -1,4 +1,6 @@
 node_modules
 public
 readmeO.md
+.vscode
+package-lock.json
 variables.env
