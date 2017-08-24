@@ -5,10 +5,6 @@ const Store = mongoose.model('Store');
 exports.homePage = (req, res) =>  {
   res.render('index');
 };
-// nemam pojma
-function nemam (sss){
-
-}
 
 exports.addStore = (req, res) =>  {
   res.render('editStore',{
@@ -36,6 +32,7 @@ exports.editStore = async (req, res) => {
 }
 
 exports.updateStore = async(req, res) => {
+  req.body.location.type = 'Point';
   const store = await Store.findByIdAndUpdate({_id: req.params.id}, req.body, {new:true, runValidators: true}).exec();
   req.flash('success', `Successfully updates <strong>${store.name}<strong>`)
   res.redirect(`/stores/${store._id}/edit`)
