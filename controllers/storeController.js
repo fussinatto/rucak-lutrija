@@ -7,21 +7,21 @@ const multerOptions = {
   storage: multer.memoryStorage(),
   fileFilter: (req, file, next) => {
     const isPhoto = file.mimetype.startsWith('image');
-    if(isPhoto) {
+    if (isPhoto) {
       next(null, true);
     } else {
-      next({message: 'That filetype isn\'t allowed'}, false)
+      next({ message: 'That filetype isn\'t allowed' }, false)
     }
   }
 }
 
 
-exports.homePage = (req, res) =>  {
+exports.homePage = (req, res) => {
   res.render('index');
 };
 
-exports.addStore = (req, res) =>  {
-  res.render('editStore',{
+exports.addStore = (req, res) => {
+  res.render('editStore', {
     title: 'Add store'
   });
 };
@@ -29,7 +29,7 @@ exports.addStore = (req, res) =>  {
 exports.upload = multer(multerOptions).single('photo');
 
 exports.resize = async (req, res, next) => {
-  if(!req.file) {
+  if (!req.file) {
     next()
     return;
   }
@@ -41,7 +41,7 @@ exports.resize = async (req, res, next) => {
   next();
 }
 
-exports.createStore = async (req, res) =>  {
+exports.createStore = async (req, res) => {
   let store = await (new Store(req.body)).save();
   req.flash('success', `Successfully created ${store.name}.`)
   res.redirect('/')
@@ -49,28 +49,34 @@ exports.createStore = async (req, res) =>  {
 
 exports.getStores = async (req, res) => {
   const stores = await Store.find()
-  res.render('stores', {title: 'Stores', stores})
+  res.render('stores', { title: 'Stores', stores })
 }
 
 exports.editStore = async (req, res) => {
-  const store = await Store.findOne({_id: req.params.id})
+  const store = await Store.findOne({ _id: req.params.id })
   res.render('editStore', {
     title: `Edit ${store.name}`,
     store
   });
 }
 
-exports.updateStore = async(req, res) => {
+exports.updateStore = async (req, res) => {
   req.body.location.type = 'Point';
-  const store = await Store.findByIdAndUpdate({_id: req.params.id}, req.body, {new:true, runValidators: true}).exec();
+  const store = await Store.findByIdAndUpdate({ _id: req.params.id }, req.body, { new: true, runValidators: true }).exec();
   req.flash('success', `Successfully updates <strong>${store.name}<strong>`)
   res.redirect(`/stores/${store._id}/edit`)
 }
 
 exports.getStoreBySlug = async (req, res, next) => {
-  const store = await Store.findOne({slug: req.params.slug})
+  const store = await Store.findOne({ slug: req.params.slug })
   if (!store) return next();
   res.render('store', {
     store
   });
+}
+
+exports.getStoreByTag = async (req, res, next) => {
+  const tags = await Store.getTagList();
+  const pageTag = req.params.tag;
+  res.render('tags', {tags, title: `${req.params.tag}`, pageTag});
 }
