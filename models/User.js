@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const md5 = require('md5');
 const validator = require('validator');
 const mongodbErrorHandler = require('mongoose-mongodb-errors');
-const passwordLocalMongoose = require('password-local-mongoose');
+const passportLocalMongoose = require('passport-local-mongoose');
 
 mongoose.Promise = global.Promise;
 
@@ -22,7 +22,7 @@ const userSchema = mongoose.Schema({
   }
 });
 
-userSchema.plugin(passwordLocalMongoose,{usernameField: 'email'})
+userSchema.plugin(passportLocalMongoose,{usernameField: 'email'})
 userSchema.plugin(mongodbErrorHandler,{usernameField: 'email'})
 
 module.exports = mongoose.model('User', userSchema);
